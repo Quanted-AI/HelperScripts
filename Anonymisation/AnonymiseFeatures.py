@@ -21,15 +21,23 @@ __status__ = "Production"
 
 import pandas as pd
 from sklearn.preprocessing import PowerTransformer
+from pandas.api.types import is_numeric_dtype
 import pickle
 
 
 def main(df:pd.DataFrame) -> None:
     df_copy = df.copy()
+    exclude_cols = ["PredictionDT", "PredictedValue", "RealValue"]
+
+    # remove non numerical features, they can't be processed as of now
+    for column in df.columns:
+        if column in exclude_cols:
+            continue
+        if not is_numeric_dtype(df_copy[column]):
+            df_copy.drop(columns=[column], inplace=True)
 
     # anonymise feature names
-    columns = df.columns.to_list()
-    exclude_cols = ["PredictionDT", "PredictedValue", "RealValue"]
+    columns = df_copy.columns.to_list()
     new_columns = [f"Feature_{i}" for i, col in enumerate(columns) if col not in exclude_cols]
     anonymised_cols = [f"Feature_{i}" if col not in exclude_cols else col for i, col in enumerate(columns)]
     df_copy.columns = anonymised_cols
