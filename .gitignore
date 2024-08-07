@@ -2,3 +2,4 @@
 de-anonymise.pkl
 QuantModelReport.csv
 Volatility_Models/Storage.h5
+.DS_Store
